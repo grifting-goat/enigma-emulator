@@ -156,24 +156,81 @@ void test() {
     cout << enigmaDecode(news, pluh, rotors, intialNum) << "\n";
 }
 
-int main() {
-    //test();
-    char pluh[] = { 
-    'b', 'a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
-    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 't', 's', 
+void interface() {
+    //variables
+    char plugBoard[] = { 
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
+    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 
     'u', 'v', 'w', 'x', 'y', 'z' 
-    };
+    }; //defines a plug board with no letters switched
     char tweet[280];
-    int rotors[3] = {0,1,2};
-    int intialNum[3] = {0, 0, 0};
-    int decode;
-    cout << "input string: ";
+    int rotors[3] = {0,1,2}; //which rotors usesd
+    int intialNum[3] = {0, 0, 0}; //intial starting config
+    bool bDirection; //determines wether to encode a phrase or decode it
+    bool bCheck;
+    int nRotNum;
+    int plugCount;
+
+    //grabs the message to encode/decode
+    cout << "Message: ";
     cin.get(tweet, 280);
+
+    //determinds which way to go
+    cout << "Would you like to encode or decode a message? (1 for decode and 0 for encode)";
+    cin >> bDirection;
+
+    //asks the user for rotor
+    cout << "which rotors would you like to use? numbered 1-5:" << endl;
+    cout << "First: ";
+    cin >> nRotNum;
+    if (nRotNum <= 5 && nRotNum >= 1) {rotors[0] = nRotNum-1;}
+    cout << "Second: ";
+    cin >> nRotNum;
+    if (nRotNum <= 5 && nRotNum >= 1) {rotors[1] = nRotNum-1;}
+    cout << "Third: ";
+    cin >> nRotNum;
+    if (nRotNum <= 5 && nRotNum >= 1) {rotors[2] = nRotNum-1;}
+
+    //set intial rotor positions
+    cout << "For each rotor, what is the starting orientation numbered 1-26: " << endl;
+    cout << "First: ";
+    cin >> nRotNum;
+    if (nRotNum <= 26 && nRotNum >= 01) {intialNum[0] = nRotNum-1;}
+    cout << "Second: ";
+    cin >> nRotNum;
+    if (nRotNum <= 26 && nRotNum >= 1) {intialNum[1] = nRotNum-1;}
+    cout << "Third: ";
+    cin >> nRotNum;
+    if (nRotNum <= 26 && nRotNum >= 1) {intialNum[2] = nRotNum-1;}
+
+    //modify plug board
+    cout << "How many plugs to use? 0-10: ";
+    cin >> plugCount;
+    for (int i = 0; i < plugCount; i++) {
+        char cSwitch; char cWith;
+        cout << i + 1 << ":" << endl;
+        cout << "Switch:" << endl;
+        cin >> cSwitch;
+        cout << "With:" << endl;
+        cin >> cWith;
+        plugBoard[cSwitch-'a'] = cWith;
+        plugBoard[cWith-'a'] = cSwitch;
+        cout << endl;
+
+    }
+
     string str(tweet);
-    string news = enigmaEncode(str, pluh, rotors, intialNum);
-    cout << news << "\n";
-    cout << "decode? ";
-    cin >> decode;
-    if (decode) {cout << enigmaDecode(news, pluh, rotors, intialNum) << "\n";}
+    string news = bDirection ? enigmaDecode(str, plugBoard, rotors, intialNum) : enigmaEncode(str, plugBoard, rotors, intialNum);
+    cout << news << endl;
+    cout << "Test to ensure? (1 for yes and 0 for no)";
+    cin >> bCheck;
+    if(bCheck) {
+        news = !bDirection ? enigmaDecode(news, plugBoard, rotors, intialNum) : enigmaEncode(news, plugBoard, rotors, intialNum); 
+        cout << news << endl;
+    }
+}
+
+int main() {
+    interface();
     return 0;
 }
