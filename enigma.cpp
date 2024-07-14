@@ -1,6 +1,20 @@
+//C++ project aimed at simulating the Enigma, the Germans WW2 era code machine.
+//Thanks to Alan Turning for cracking the code
+//The functions I wrote were designed to parallel the actual analog functions of the Enigma, not to be the most technically efficient or simplest way of achieving a desired output
+
+//-grifting-goat
+
 #include <iostream>
 #include <string>
+
 using namespace std;
+
+//function inits
+void enigmaCode(char &c, char plugs[26], int rotors[3],int intialNum[3]);
+void plugBoard(char &c, char plugs[26]);
+void rotorEncode(char &c, int rotor, int offset);
+void enigmaBack(char &c, char plugs[26], int rotors[3], int intialNum[3]);
+void rotorDecode(char &c, int rotor, int offset);
 
 //rotors and reflector
 char rotorSet[26][5] = {
@@ -32,13 +46,6 @@ char rotorSet[26][5] = {
     {'n', 'z', 'y', 's', 'm'}
 };
 char reflector[26] = {'l', 'a', 'g', 'p', 's', 'e', 'j', 'f', 'z', 't', 'm', 'q', 'd', 'o', 'y', 'v', 'i', 'x', 'k', 'h', 'w', 'c', 'r', 'b', 'n', 'u'};
-
-//function inits
-void enigmaCode(char &c, char plugs[26], int rotors[3],int intialNum[3]);
-void plugBoard(char &c, char plugs[26]);
-void rotorEncode(char &c, int rotor, int offset);
-void enigmaBack(char &c, char plugs[26], int rotors[3], int intialNum[3]);
-void rotorDecode(char &c, int rotor, int offset);
 
 //translates a string to or from enigma code
 string enigmaEncode(string str, char plugs[26], int rotors[3], int startSet[3]) {
@@ -78,11 +85,13 @@ void enigmaCode(char &c, char plugs[26], int rotors[3], int intialNum[3]) {
         }
     }
 }
+
 //switches a character based on which plugs are activated
 void plugBoard(char &c, char plugs[26]) {
     c = plugs[(c-'a')];
 
 }
+
 //runs the character through a rotor
 void rotorEncode(char &c, int rotor, int offset) {
     c = rotorSet[((c-'a')+offset)%26][rotor];
@@ -105,6 +114,8 @@ string enigmaDecode(string str, char plugs[26], int rotors[3], int startSet[3]) 
     return s;
     
 }
+
+//push a character back through the machine
 void enigmaBack(char &c, char plugs[26], int rotors[3], int intialNum[3]) {
     plugBoard(c, plugs);
     // go trhough the 3 rotors
@@ -131,6 +142,7 @@ void enigmaBack(char &c, char plugs[26], int rotors[3], int intialNum[3]) {
         }
     }
 }
+
 //decodes through a single rotor
 void rotorDecode(char &c, int rotor, int offset) {
     for (int i = 0; i < 26; i++ ) {
@@ -140,20 +152,6 @@ void rotorDecode(char &c, int rotor, int offset) {
         }
     }
 
-}
-void test() {
-    char pluh[] = { 
-    'b', 'a', 'c', 'd', 'o', 'f', 'g', 'h', 'i', 'j', 
-    'k', 'l', 'm', 'n', 'e', 'p', 'q', 'r', 't', 's', 
-    'u', 'v', 'w', 'x', 'y', 'z' 
-    };
-    int rotors[3] = {0,1,2};
-    int intialNum[3] = {0, 0, 0};
-    string s = "turingiscoolandall";
-    string news = enigmaEncode(s, pluh, rotors, intialNum);
-    cout << news << "\n";
-    cout << s << "\n";
-    cout << enigmaDecode(news, pluh, rotors, intialNum) << "\n";
 }
 
 void interface() {
@@ -222,6 +220,8 @@ void interface() {
     string str(tweet);
     string news = bDirection ? enigmaDecode(str, plugBoard, rotors, intialNum) : enigmaEncode(str, plugBoard, rotors, intialNum);
     cout << news << endl;
+
+    //test everything is working properly
     cout << "Test to ensure? (1 for yes and 0 for no)";
     cin >> bCheck;
     if(bCheck) {
@@ -230,7 +230,10 @@ void interface() {
     }
 }
 
+//entry point
 int main() {
-    interface();
-    return 0;
+    interface(); // run the interface once
+    return 0; //make the cpu happy
 }
+
+//it would be fun to send the setting information over asymetric encryption and then just use this program to encrypt data (probably puzzle a hacker or two)
